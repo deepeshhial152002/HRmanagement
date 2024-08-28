@@ -22,7 +22,7 @@ app.use("/api/v1", internRouter);
 app.use("/api/v1", linkRouter);
 app.use("/api/v1", deleteLogRouter);
 
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });   
