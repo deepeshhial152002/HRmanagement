@@ -31,7 +31,7 @@ const LoginHR = () => {
       alert("All field are required")
     }
     else{
-      const response = await axios.post("http://qodeit.store/api/v1/login",Values);
+      const response = await axios.post("http://localhost:3007/api/v1/login",Values);
       // console.log(response.data)
       
 

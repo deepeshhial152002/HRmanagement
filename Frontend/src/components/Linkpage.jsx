@@ -30,7 +30,7 @@ const Linkpage = () => {
       if (Values.url === "") {
         alert("All fields are required");
       } else {
-        const response = await axios.post(`http://qodeit.store/api/v1/submit-link`, { url: Values.url }, { headers });
+        const response = await axios.post(`http://localhost:3007/api/v1/submit-link`, { url: Values.url }, { headers });
         alert(response.data.message);
         window.location.reload(); // Refresh the page after the alert is shown
       }
@@ -46,7 +46,7 @@ const Linkpage = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="flex items-center justify-center mt-11">
       <form className="space-y-6 w-[60vh]">

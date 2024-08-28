@@ -27,7 +27,7 @@ const ProfileIntern = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://qodeit.store/api/v1/getIntern-info`, { headers });
+        const response = await axios.get(`http://localhost:3007/api/v1/getIntern-info`, { headers });
         setInternProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile data", error);
@@ -36,7 +36,7 @@ const ProfileIntern = () => {
 
     const fetchUrlData = async () => {
       try {
-        const response = await axios.get(`http://qodeit.store/v1/url-info-intern`, { headers });
+        const response = await axios.get(`http://localhost:3007/v1/url-info-intern`, { headers });
         setUrlData(response.data.data || []); // Ensure urlData is an array, even if empty
       } catch (error) {
         console.error("Error fetching URL data", error);
