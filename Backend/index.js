@@ -10,7 +10,11 @@ const linkRouter = require("./routes/linkRouter")
 const deleteLogRouter = require("./routes/deleteLogRouter")
 require('./routes/scheduler');
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://qodeit.store',  // Adjust this to match your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 db()
