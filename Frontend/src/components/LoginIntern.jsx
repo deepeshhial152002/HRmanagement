@@ -32,7 +32,7 @@ const LoginIntern = () => {
       alert("All field are required")
     }
     else{
-      const response = await axios.post(`http://localhost:4000/api/v1/login-intern`,Values);
+      const response = await axios.post(`http://QODEIT.CLOUD/api/v1/login-intern`,Values);
       // console.log(response.data)
       
 

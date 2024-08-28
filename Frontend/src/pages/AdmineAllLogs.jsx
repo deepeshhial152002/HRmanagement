@@ -10,7 +10,7 @@ const AdmineAllLogs = () => {
     useEffect(() => {
         const fetchDeletionLogs = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/api/v1/getall-deletedlogs`);
+                const response = await axios.get(`http://QODEIT.CLOUD/api/v1/getall-deletedlogs`);
                 setDeletionLogs(response.data.data);
             } catch (error) {
                 console.error("Error fetching deletion logs", error);
