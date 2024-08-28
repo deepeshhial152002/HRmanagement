@@ -21,10 +21,10 @@ db()
 
 
 
-app.use("/api/v1", hrRouter );
-app.use("/api/v1", internRouter);
-app.use("/api/v1", linkRouter);
-app.use("/api/v1", deleteLogRouter);
+app.use("/api", hrRouter );
+app.use("/api", internRouter);
+app.use("/api", linkRouter);
+app.use("/api", deleteLogRouter);
 
 const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => {

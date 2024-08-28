@@ -23,7 +23,7 @@ const ProfileHR = () => {
         } else {
             const fetchProfile = async () => {
                 try {
-                    const response = await axios.get(`http://qodeit.store/api/v1/gethrinfo`, { headers });
+                    const response = await axios.get(`http://qodeit.store/api/gethrinfo`, { headers });
                     setProfile(response.data);
                 } catch (error) {
                     console.error("Error fetching profile data", error);
@@ -39,7 +39,7 @@ const ProfileHR = () => {
         } else {
             const fetchInternInfo = async () => {
                 try {
-                    const response = await axios.get(`http://qodeit.store/api/v1/hrIntern-info`, { headers });
+                    const response = await axios.get(`http://qodeit.store/api/hrIntern-info`, { headers });
                     setInternInfo(response.data.data);
                 } catch (error) {
                     console.error("Error fetching intern info", error);
@@ -53,7 +53,7 @@ const ProfileHR = () => {
         const confirmed = window.confirm("Are you sure you want to delete this intern?");
         if (confirmed) {
             try {
-                await axios.delete(`http://qodeit.store/api/v1/delete-intern/${internId}`, { headers });
+                await axios.delete(`http://qodeit.store/api/delete-intern/${internId}`, { headers });
                 setInternInfo(internInfo.filter((intern) => intern._id !== internId));
                 alert('Intern deleted successfully.');
             } catch (error) {
