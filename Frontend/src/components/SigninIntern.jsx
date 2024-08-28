@@ -19,7 +19,7 @@ const SigninIntern = () => {
        
             const fetchProfile = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:3007/api/v1/getall-hr`,);
+                    const response = await axios.get(`http://qodeit.store/api/v1/getall-hr`,);
                     setHrNameAndId(response.data.data);
                 } catch (error) {
                     console.error("Error fetching profile data", error);
@@ -56,7 +56,7 @@ const SigninIntern = () => {
           alert("All field are required")
         }
         else{
-          const response = await axios.post(`http://localhost:3007/api/v1/sign-up-intern`,formValues);
+          const response = await axios.post(`http://qodeit.store/api/v1/sign-up-intern`,formValues);
           console.log(response.data)
           
     
