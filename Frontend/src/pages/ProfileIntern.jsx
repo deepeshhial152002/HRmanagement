@@ -52,7 +52,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-      const response = await axios.post('http://qodeit.store/api/check-and-add-url', { url });
+      const response = await axios.post('http://qodeit.store/api/check-and-add-url', { url },{ headers });
       alert(response.data.message); // Show success or error message in an alert
   } catch (error) {
       if (error.response) {
