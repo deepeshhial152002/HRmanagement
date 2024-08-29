@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken")
 const {authenticateToken} = require("./auth");
 
 
+// Revised /submit-link endpoint
 router.post('/submit-link', authenticateToken, async (req, res) => {
     try {
         const { id } = req.headers;

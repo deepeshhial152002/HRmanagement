@@ -87,7 +87,6 @@ router.post("/login-intern",async(req,res)=>{
     }
     })
 
-
     router.get("/intern-info", authenticateToken, async (req, res) => {
         try {
             const { id, page = 1, limit = 10 } = req.headers;
@@ -96,34 +95,31 @@ router.post("/login-intern",async(req,res)=>{
                 return res.status(400).json({ message: 'Missing intern ID' });
             }
     
-            // Fetch intern profile
-            const internData = await intern.findById(id).select('-password');
-    
-            if (!internData) {
-                return res.status(404).json({ message: "Intern not found" });
-            }
-    
-            // Fetch intern links with pagination
-            const linksData = await intern.findById(id).populate({
+            // Fetch intern profile and links in a single query
+            const internData = await intern.findById(id).select('-password').populate({
                 path: 'links',
                 select: 'url createdAt',
                 options: {
                     limit: parseInt(limit),
                     skip: (parseInt(page) - 1) * parseInt(limit),
-                },
+                    sort: { createdAt: -1 } // Optional: sort by creation date
+                }
             });
+    
+            if (!internData) {
+                return res.status(404).json({ message: "Intern not found" });
+            }
     
             // Send combined response
             res.status(200).json({
                 profile: internData,
-                links: linksData.links,
+                links: internData.links,
             });
         } catch (error) {
             console.error("Error in /intern-info:", error.message);
             res.status(500).json({ message: "Internal server error", error: error.message });
         }
     });
-    
     
     
     
