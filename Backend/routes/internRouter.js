@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const hr = require("../model/hr");
 const intern = require("../model/intern");
+const link = require("../model/link");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const {authenticateToken} = require("../routes/auth");
@@ -123,31 +124,66 @@ router.post("/login-intern",async(req,res)=>{
 
 
 
+    // router.get('/user-links', authenticateToken, async (req, res) => {
+    //     try {
+    //         const id = req.headers; // Extract user ID from headers
+    
+    //         if (!id) {
+    //             return res.status(400).json({ message: 'User ID is required' });
+    //         }
+    
+    //         // Find the intern by user ID and populate links
+    //         const internData = await intern.findById(id).populate('links');
+    
+    //         if (!internData) {
+    //             return res.status(404).json({ message: 'Intern not found' });
+    //         }
+    
+    //         // Return the intern details and the associated links
+    //         res.status(200).json({
+    //             user: {
+    //                 id: internData._id,
+    //                 name: internData.name,
+    //                 DOB: internData.DOB,
+    //                 hrID: internData.hrID,
+    //                 createdAt: internData.createdAt
+    //             },
+    //             links: internData.links,
+    //         });
+    //     } catch (error) {
+    //         console.error("Error in /user-links:", error.message);
+    //         res.status(500).json({ message: 'Internal server error', error: error.message });
+    //     }
+    // });
+    
+
     router.get('/user-links', authenticateToken, async (req, res) => {
         try {
-            const id = req.headers; // Extract user ID from headers
+            const { id } = req.headers;
     
             if (!id) {
-                return res.status(400).json({ message: 'User ID is required' });
+                return res.status(400).json({ message: 'User ID is required in the headers.' });
             }
     
-            // Find the intern by user ID and populate links
-            const internData = await intern.findById(id).populate('links');
-    
+            // Fetch the intern profile
+            const internData = await intern.findById(id).select('name');
             if (!internData) {
-                return res.status(404).json({ message: 'Intern not found' });
+                return res.status(404).json({ message: 'Intern not found.' });
             }
     
-            // Return the intern details and the associated links
+            // Fetch all links associated with the intern
+            const linksData = await link.find({ interns: id }).select('url');
+    
+            // If links are found, return them with the intern profile
+            if (linksData.length === 0) {
+                return res.status(404).json({ message: 'No links found for this intern.' });
+            }
+    
             res.status(200).json({
-                user: {
-                    id: internData._id,
+                profile: {
                     name: internData.name,
-                    DOB: internData.DOB,
-                    hrID: internData.hrID,
-                    createdAt: internData.createdAt
                 },
-                links: internData.links,
+                links: linksData,
             });
         } catch (error) {
             console.error("Error in /user-links:", error.message);
