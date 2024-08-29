@@ -93,7 +93,7 @@ router.post("/login-intern",async(req,res)=>{
         try {
             const { id } = req.headers;
     
-            // Fetch intern data excluding password
+            
             const data = await intern.findById(id).select('-password -otherLargeFieldIfAny'); // Exclude large unnecessary fields
     
             if (!data) {
@@ -114,10 +114,10 @@ router.post("/login-intern",async(req,res)=>{
         try {
             const { id, page = 1, limit = 10 } = req.headers;
     
-            // Fetch intern data with pagination and selective fields
+            
             const internData = await intern.findById(id).populate({
                 path: 'links',
-                select: 'url createdAt', // Fetch only necessary fields
+                select: 'url createdAt', 
                 options: {
                     limit: parseInt(limit),
                     skip: (parseInt(page) - 1) * parseInt(limit),
