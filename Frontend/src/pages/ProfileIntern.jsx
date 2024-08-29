@@ -3,12 +3,19 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { authAction } from '../store/auth';
-import Linkpage from '../components/Linkpage';
+// import Linkpage from '../components/Linkpage';
 
 const ProfileIntern = () => {
   const [profile, setInternProfile] = useState(null);
   const [urlData, setUrlData] = useState(null); // Initially set to null to distinguish between loading and empty state
   const [currentPage, setCurrentPage] = useState(1);
+
+
+  const [values, setValues] = useState({ url: "" });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  
   const urlsPerPage = 10;
   
   const navigate = useNavigate();
@@ -54,8 +61,38 @@ const ProfileIntern = () => {
     };
   }, [headers, navigate]);
   
-  
+  const change = (e) => {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  };
 
+  const submit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      if (values.url === "") {
+        alert("All fields are required");
+      } else {
+        const response = await axios.post(`http://qodeit.store/api/submit-link`, { url: values.url }, { headers });
+        alert(response.data.message);
+        // Optionally refetch or update the state here
+        // e.g., fetchUrlData(); // Assuming you have a function to fetch URL data
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message);
+        alert(error.response.data.message);
+      } else {
+        setError("Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  
   // Pagination logic
   const indexOfLastUrl = currentPage * urlsPerPage;
   const indexOfFirstUrl = indexOfLastUrl - urlsPerPage;
@@ -93,7 +130,33 @@ const ProfileIntern = () => {
        
       
         
-      <Linkpage />
+      {/* <Linkpage /> */}
+
+
+      <div className="flex items-center justify-center mt-11">
+      <form className="space-y-6 w-[60vh]" onSubmit={submit}>
+        <div className="flex items-center justify-between">
+          <input
+            id="url"
+            name="url"
+            type="text"
+            autoComplete="url"
+            required
+            className="w-full h-10 px-3 border-2 rounded-md"
+            placeholder="Enter URL"
+            value={values.url}
+            onChange={change}
+          />
+          <button
+            type="submit"
+            className="h-10 ml-4 text-white rounded-md w-28 bg-zinc-700"
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Save URL'}
+          </button>
+        </div>
+      </form>
+    </div>
      
     
       <div className='flex flex-col items-center w-full mt-11'>
