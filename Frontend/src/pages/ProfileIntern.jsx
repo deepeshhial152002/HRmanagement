@@ -18,35 +18,39 @@ const ProfileIntern = () => {
     id: localStorage.getItem("id"),
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
-
-  const fetchProfile = async (retryCount = 3) => {
+  
+  const fetchProfile = async (retryCount = 3, delay = 1000) => {
     try {
         const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
         setInternProfile(response.data);
     } catch (error) {
         if (retryCount > 0) {
             console.log(`Retrying... (${3 - retryCount + 1})`);
-            fetchProfile(retryCount - 1);
+            setTimeout(() => fetchProfile(retryCount - 1, delay * 2), delay); // Exponential backoff
         } else {
             console.error("Error fetching profile data", error);
         }
     }
 };
 
-const fetchUrlData = async (retryCount = 3) => {
-    try {
-        const response = await axios.get(`http://qodeit.store/url-info-intern?page=${currentPage}&limit=${urlsPerPage}`, { headers });
-        setUrlData(response.data.data || []);
-    } catch (error) {
-        if (retryCount > 0) {
-            console.log(`Retrying... (${3 - retryCount + 1})`);
-            fetchUrlData(retryCount - 1);
-        } else {
-            console.error("Error fetching URL data", error);
-            setUrlData([]);
-        }
-    }
+
+
+
+const fetchUrlData = async (retryCount = 3, delay = 1000) => {
+  try {
+      const response = await axios.get(`http://qodeit.store/url-info-intern?page=${currentPage}&limit=${urlsPerPage}`, { headers });
+      setUrlData(response.data.data || []);
+  } catch (error) {
+      if (retryCount > 0) {
+          console.log(`Retrying... (${3 - retryCount + 1})`);
+          setTimeout(() => fetchUrlData(retryCount - 1, delay * 2), delay); // Exponential backoff
+      } else {
+          console.error("Error fetching URL data", error);
+          setUrlData([]); // Set as empty array on error to avoid indefinite loading
+      }
+  }
 };
+
 
 useEffect(() => {
   if (!headers.id || !headers.authorization) {
