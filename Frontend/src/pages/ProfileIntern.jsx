@@ -35,23 +35,33 @@ const ProfileIntern = () => {
     let isMounted = true; // flag to prevent setting state on unmounted component
   
     const fetchProfile = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
-        if (isMounted) setInternProfile(response.data);
+          const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
+          setProfile(response.data);
       } catch (error) {
-        console.error("Error fetching profile data", error);
+          console.error("Error fetching profile data:", error);
+          setError("Failed to fetch profile data.");
+      } finally {
+          setLoading(false);
       }
-    };
+  };
   
-    const fetchUrlData = async () => {
+  const fetchUrlData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
-        if (isMounted) setUrlData(response.data.data || []);
+          const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
+          setUrlData(response.data.data || []);
       } catch (error) {
-        console.error("Error fetching URL data", error);
-        if (isMounted) setUrlData([]);
+          console.error("Error fetching URL data:", error);
+          setError("Failed to fetch URL data.");
+      } finally {
+          setLoading(false);
       }
-    };
+  };
+  
   
     fetchProfile();
     fetchUrlData();
