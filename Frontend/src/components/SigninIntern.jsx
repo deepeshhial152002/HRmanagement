@@ -142,7 +142,7 @@ const SigninIntern = () => {
             className="w-full py-2 text-white rounded-md bg-zinc-700"
             onClick={submit}
         >
-            Sign In
+            Sign up
         </button>
     </form>
     <div className='mt-2' >

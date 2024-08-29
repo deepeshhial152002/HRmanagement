@@ -132,7 +132,7 @@ const LoginIntern = () => {
     </div>
      <div className='flex items-center justify-between gap-5 p-3 mt-2 border-8' >
 <p>Create An Account</p>
-      <Link className='flex items-center justify-center w-24 h-10 text-white rounded-md bg-zinc-700' to={"/SigninIntern"} >Sign In</Link>
+      <Link className='flex items-center justify-center w-24 h-10 text-white rounded-md bg-zinc-700' to={"/SigninIntern"} >Sign up</Link>
       </div>
       </div>
      
