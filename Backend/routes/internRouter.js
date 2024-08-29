@@ -88,7 +88,7 @@ router.post("/login-intern",async(req,res)=>{
     })
 
 
-    router.get("/getIntern-info", authenticateToken, async (req, res) => {
+    router.get("/getIntern-info", async (req, res) => {
         try {
             const { id } = req.headers;
     
@@ -112,7 +112,7 @@ router.post("/login-intern",async(req,res)=>{
 
 
 
-    router.get("/url-info-intern", authenticateToken, async (req, res) => {
+    router.get("/url-info-intern", async (req, res) => {
         try {
             const { id, page = 1, limit = 10 } = req.headers;
     
