@@ -89,49 +89,54 @@ router.post("/login-intern",async(req,res)=>{
 
 
 
-    router.get("/getIntern-info", authenticateToken ,async (req,res)=>{
+    router.get("/getIntern-info", authenticateToken, async (req, res) => {
         try {
-            const {id} = req.headers
-            const data = await intern.findById(id).select('-password');
+            const { id } = req.headers;
+    
+            // Fetch intern data excluding password
+            const data = await intern.findById(id).select('-password -otherLargeFieldIfAny'); // Exclude large unnecessary fields
+    
+            if (!data) {
+                return res.status(404).json({ message: "Intern not found" });
+            }
+    
             return res.status(200).json(data);
-            
         } catch (error) {
-            res.status(500).json({message:"Internal server error"})
+            console.error("Error fetching intern info:", error);
+            return res.status(500).json({ message: "Internal server error" });
         }
-    })
+    });
 
 
 
 
     router.get("/url-info-intern", authenticateToken, async (req, res) => {
         try {
-            const { id } = req.headers;
-            const { page = 1, limit = 10 } = req.query;
+            const { id, page = 1, limit = 10 } = req.headers;
     
-            const internData = await intern.findById(id)
-                .populate({
-                    path: "links",
-                    options: {
-                        skip: (page - 1) * limit,
-                        limit: parseInt(limit),
-                    },
-                });
+            // Fetch intern data with pagination and selective fields
+            const internData = await intern.findById(id).populate({
+                path: 'links',
+                select: 'url createdAt', // Fetch only necessary fields
+                options: {
+                    limit: parseInt(limit),
+                    skip: (parseInt(page) - 1) * parseInt(limit),
+                },
+            });
     
             if (!internData) {
                 return res.status(404).json({ message: "Intern not found" });
             }
     
-            const totalLinks = internData.links.length;
             res.status(200).json({
-                message: "Success to get intern data",
+                message: "Success in getting intern data",
                 data: internData.links,
-                totalLinks,
             });
-    
         } catch (error) {
             console.error("Error fetching intern data:", error);
             return res.status(500).json({ message: "Internal server error", error: error.message });
         }
     });
+    
     
 module.exports = router;
