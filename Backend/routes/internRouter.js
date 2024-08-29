@@ -88,73 +88,7 @@ router.post("/login-intern",async(req,res)=>{
     }
     })
 
-    // router.get("/intern-info", authenticateToken, async (req, res) => {
-    //     try {
-    //         const { id, page = 1, limit = 10 } = req.headers;
-    
-    //         if (!id) {
-    //             return res.status(400).json({ message: 'Missing intern ID' });
-    //         }
-    
-    //         // Fetch intern profile and links in a single query
-    //         const internData = await intern.findById(id).select('-password').populate({
-    //             path: 'links',
-    //             select: 'url createdAt',
-    //             options: {
-    //                 limit: parseInt(limit),
-    //                 skip: (parseInt(page) - 1) * parseInt(limit),
-    //                 sort: { createdAt: -1 } // Optional: sort by creation date
-    //             }
-    //         });
-    
-    //         if (!internData) {
-    //             return res.status(404).json({ message: "Intern not found" });
-    //         }
-    
-    //         // Send combined response
-    //         res.status(200).json({
-    //             profile: internData,
-    //             links: internData.links,
-    //         });
-    //     } catch (error) {
-    //         console.error("Error in /intern-info:", error.message);
-    //         res.status(500).json({ message: "Internal server error", error: error.message });
-    //     }
-    // });
 
-
-
-    // router.get('/user-links', authenticateToken, async (req, res) => {
-    //     try {
-    //         const id = req.headers; // Extract user ID from headers
-    
-    //         if (!id) {
-    //             return res.status(400).json({ message: 'User ID is required' });
-    //         }
-    
-    //         // Find the intern by user ID and populate links
-    //         const internData = await intern.findById(id).populate('links');
-    
-    //         if (!internData) {
-    //             return res.status(404).json({ message: 'Intern not found' });
-    //         }
-    
-    //         // Return the intern details and the associated links
-    //         res.status(200).json({
-    //             user: {
-    //                 id: internData._id,
-    //                 name: internData.name,
-    //                 DOB: internData.DOB,
-    //                 hrID: internData.hrID,
-    //                 createdAt: internData.createdAt
-    //             },
-    //             links: internData.links,
-    //         });
-    //     } catch (error) {
-    //         console.error("Error in /user-links:", error.message);
-    //         res.status(500).json({ message: 'Internal server error', error: error.message });
-    //     }
-    // });
     
 
     router.get('/user-links', authenticateToken, async (req, res) => {
@@ -172,24 +106,20 @@ router.post("/login-intern",async(req,res)=>{
             }
     
             // Fetch all links associated with the intern
-            const linksData = await link.find({ interns: id }).select('url');
-    
-            // If links are found, return them with the intern profile
-            if (linksData.length === 0) {
-                return res.status(404).json({ message: 'No links found for this intern.' });
-            }
+            const linksData = await link.find({ interns: id }).select('url createdAt');
     
             res.status(200).json({
                 profile: {
                     name: internData.name,
                 },
-                links: linksData,
+                links: linksData.length ? linksData : [],
             });
         } catch (error) {
             console.error("Error in /user-links:", error.message);
             res.status(500).json({ message: 'Internal server error', error: error.message });
         }
     });
+    
     
     
     
