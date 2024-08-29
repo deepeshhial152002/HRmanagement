@@ -18,50 +18,35 @@ const ProfileIntern = () => {
     id: localStorage.getItem("id"),
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
+
+  useEffect(() => {
+    if (!headers.id || !headers.authorization) {
+      navigate("/"); // Redirect to / route if headers are missing
+      return;
+    }
   
-  const fetchProfile = async (retryCount = 3, delay = 1000) => {
-    try {
+    const fetchProfile = async () => {
+      try {
         const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
         setInternProfile(response.data);
-    } catch (error) {
-        if (retryCount > 0) {
-            console.log(`Retrying... (${3 - retryCount + 1})`);
-            setTimeout(() => fetchProfile(retryCount - 1, delay * 2), delay); // Exponential backoff
-        } else {
-            console.error("Error fetching profile data", error);
-        }
-    }
-};
-
-
-
-
-const fetchUrlData = async (retryCount = 3, delay = 1000) => {
-  try {
-      const response = await axios.get(`http://qodeit.store/url-info-intern?page=${currentPage}&limit=${urlsPerPage}`, { headers });
-      setUrlData(response.data.data || []);
-  } catch (error) {
-      if (retryCount > 0) {
-          console.log(`Retrying... (${3 - retryCount + 1})`);
-          setTimeout(() => fetchUrlData(retryCount - 1, delay * 2), delay); // Exponential backoff
-      } else {
-          console.error("Error fetching URL data", error);
-          setUrlData([]); // Set as empty array on error to avoid indefinite loading
+      } catch (error) {
+        console.error("Error fetching profile data", error);
       }
-  }
-};
-
-
-useEffect(() => {
-  if (!headers.id || !headers.authorization) {
-      navigate("/");
-      return;
-  }
-
-  fetchProfile();
-  fetchUrlData();
-}, [headers, navigate, currentPage]);
-
+    };
+  
+    const fetchUrlData = async () => {
+      try {
+        const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
+        setUrlData(response.data.data || []); // Ensure urlData is an array, even if empty
+      } catch (error) {
+        console.error("Error fetching URL data", error);
+        setUrlData([]); // Set as empty array on error to avoid indefinite loading
+      }
+    };
+  
+    fetchProfile();
+    fetchUrlData();
+  }, [headers, navigate]);
   
 
   // Pagination logic
