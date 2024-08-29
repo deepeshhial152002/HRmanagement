@@ -21,14 +21,16 @@ const ProfileIntern = () => {
 
   useEffect(() => {
     if (!headers.id || !headers.authorization) {
-      navigate("/"); // Redirect to / route if headers are missing
+      navigate("/");
       return;
     }
+  
+    let isMounted = true; // flag to prevent setting state on unmounted component
   
     const fetchProfile = async () => {
       try {
         const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
-        setInternProfile(response.data);
+        if (isMounted) setInternProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile data", error);
       }
@@ -37,16 +39,21 @@ const ProfileIntern = () => {
     const fetchUrlData = async () => {
       try {
         const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
-        setUrlData(response.data.data || []); // Ensure urlData is an array, even if empty
+        if (isMounted) setUrlData(response.data.data || []);
       } catch (error) {
         console.error("Error fetching URL data", error);
-        setUrlData([]); // Set as empty array on error to avoid indefinite loading
+        if (isMounted) setUrlData([]);
       }
     };
   
     fetchProfile();
     fetchUrlData();
+  
+    return () => {
+      isMounted = false; // cleanup function to prevent state updates on unmounted component
+    };
   }, [headers, navigate]);
+  
   
 
   // Pagination logic
