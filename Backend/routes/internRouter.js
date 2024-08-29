@@ -88,25 +88,27 @@ router.post("/login-intern",async(req,res)=>{
     })
 
 
-
     router.get("/getIntern-info", authenticateToken, async (req, res) => {
         try {
             const { id } = req.headers;
     
-            
-            const data = await intern.findById(id).select('-password -otherLargeFieldIfAny'); // Exclude large unnecessary fields
+            if (!id) {
+                return res.status(400).json({ message: 'Missing intern ID' });
+            }
+    
+            const data = await intern.findById(id).select('-password');
     
             if (!data) {
                 return res.status(404).json({ message: "Intern not found" });
             }
     
-            return res.status(200).json(data);
+            res.status(200).json(data);
         } catch (error) {
-            console.error("Error fetching intern info:", error);
-            return res.status(500).json({ message: "Internal server error" });
+            console.error("Error in /getIntern-info:", error.message);
+            res.status(500).json({ message: "Internal server error" });
         }
     });
-
+    
 
 
 
@@ -114,10 +116,13 @@ router.post("/login-intern",async(req,res)=>{
         try {
             const { id, page = 1, limit = 10 } = req.headers;
     
-            
+            if (!id) {
+                return res.status(400).json({ message: 'Missing intern ID' });
+            }
+    
             const internData = await intern.findById(id).populate({
                 path: 'links',
-                select: 'url createdAt', 
+                select: 'url createdAt',
                 options: {
                     limit: parseInt(limit),
                     skip: (parseInt(page) - 1) * parseInt(limit),
@@ -133,10 +138,11 @@ router.post("/login-intern",async(req,res)=>{
                 data: internData.links,
             });
         } catch (error) {
-            console.error("Error fetching intern data:", error);
-            return res.status(500).json({ message: "Internal server error", error: error.message });
+            console.error("Error in /url-info-intern:", error.message);
+            res.status(500).json({ message: "Internal server error", error: error.message });
         }
     });
+    
     
     
 module.exports = router;

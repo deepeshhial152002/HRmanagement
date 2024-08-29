@@ -10,44 +10,36 @@ const {authenticateToken} = require("./auth");
 
 router.post('/submit-link', authenticateToken, async (req, res) => {
     try {
-     
-        const { id } = req.headers; // Make sure the ID is sent in the headers
+        const { id } = req.headers;
         const { url } = req.body;
-        
 
-        // Find the intern by ID
+        if (!id || !url || typeof url !== 'string' || !/^https?:\/\/.+/.test(url)) {
+            return res.status(400).json({ message: 'Invalid request' });
+        }
+
         const internData = await intern.findById(id);
         if (!internData) {
             return res.status(404).json({ message: 'Intern not found' });
         }
 
-           // Check if the URL already exists in the database
-           const existingLink = await link.findOne({ url });
-           if (existingLink) {
-               return res.status(400).json({ 
-                   message: 'This URL already exists. Try after 15 days.' 
-               });
-           }
-        // Create a new link
-        const newLink = new link({
-            url: url,  // URL should be a single string
-            interns: id
-        });
+        const existingLink = await link.findOne({ url });
+        if (existingLink) {
+            return res.status(400).json({ message: 'This URL already exists. Try after 15 days.' });
+        }
 
-        // Save the link
+        const newLink = new link({ url, interns: id });
         const savedLink = await newLink.save();
-
-        // Add the link ID to the intern's links array
         internData.links.push(savedLink._id);
         await internData.save();
 
-        return res.status(200).json({ message: 'Link submitted successfully', link: savedLink });
+        res.status(200).json({ message: 'Link submitted successfully', link: savedLink });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        console.error("Error in /submit-link:", error.message);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 
 module.exports = router;
