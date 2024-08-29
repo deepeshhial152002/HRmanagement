@@ -20,33 +20,42 @@ const ProfileIntern = () => {
   };
 
   useEffect(() => {
+    const fetchProfile = async (retryCount = 3) => {
+      while (retryCount > 0) {
+        try {
+          const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
+          setInternProfile(response.data);
+          break; // Exit loop on success
+        } catch (error) {
+          retryCount--;
+          console.error("Error fetching profile data", error);
+          if (retryCount === 0) setInternProfile(null); // Set to null after all retries fail
+        }
+      }
+    };
+  
+    const fetchUrlData = async (retryCount = 3) => {
+      while (retryCount > 0) {
+        try {
+          const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
+          setUrlData(response.data.data || []);
+          break; // Exit loop on success
+        } catch (error) {
+          retryCount--;
+          console.error("Error fetching URL data", error);
+          if (retryCount === 0) setUrlData([]); // Set to empty array after all retries fail
+        }
+      }
+    };
+  
     if (!headers.id || !headers.authorization) {
-      navigate("/"); // Redirect to / route if headers are missing
-      return;
+      navigate("/");
+    } else {
+      fetchProfile();
+      fetchUrlData();
     }
-
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
-        setInternProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile data", error);
-      }
-    };
-
-    const fetchUrlData = async () => {
-      try {
-        const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
-        setUrlData(response.data.data || []); // Ensure urlData is an array, even if empty
-      } catch (error) {
-        console.error("Error fetching URL data", error);
-        setUrlData([]); // Set as empty array on error to avoid indefinite loading
-      }
-    };
-
-    fetchProfile();
-    fetchUrlData();
   }, [headers, navigate]);
+  
 
   // Pagination logic
   const indexOfLastUrl = currentPage * urlsPerPage;
