@@ -110,7 +110,6 @@ const ProfileHR = () => {
                         <thead>
                             <tr>
                                 <th className='px-4 py-2 text-left'>Name</th>
-                                <th className='px-4 py-2 text-left'>Email</th>
                                 <th className='px-4 py-2 text-left'>Joining Date</th>
                                 <th className='px-4 py-2 text-left'>Joining Time</th>
                                 <th className='px-4 py-2 text-left'>Action</th>
@@ -132,7 +131,6 @@ const ProfileHR = () => {
                                 return (
                                     <tr key={item._id || i} className="border-t">
                                         <td className='px-4 py-2'>{item.name}</td>
-                                        <td className='px-4 py-2'>{item.email}</td>
                                         <td className='px-4 py-2'>{joiningDate} </td>
                                         <td className='px-4 py-2'>{joiningTime} </td>
                                         <td className='px-4 py-2'>
