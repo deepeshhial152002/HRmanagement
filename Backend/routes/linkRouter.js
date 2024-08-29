@@ -1,46 +1,38 @@
 const express = require("express");
 const router = express.Router();
-const hr = require("../model/hr");
-const intern = require("../model/intern");
+// const hr = require("../model/hr");
+// const intern = require("../model/intern");
 const link = require("../model/link");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken")
 const {authenticateToken} = require("./auth");
 
 
-// Revised /submit-link endpoint
-router.post('/submit-link', authenticateToken, async (req, res) => {
+router.post('/check-and-add-url', authenticateToken, async (req, res) => {
     try {
-        const { id } = req.headers;
         const { url } = req.body;
 
-        if (!id || !url || typeof url !== 'string' || !/^https?:\/\/.+/.test(url)) {
-            return res.status(400).json({ message: 'Invalid request' });
+        if (!url || typeof url !== 'string' || !/^https?:\/\/.+/.test(url)) {
+            return res.status(400).json({ message: 'Invalid UPI/URL format' });
         }
 
-        const internData = await intern.findById(id);
-        if (!internData) {
-            return res.status(404).json({ message: 'Intern not found' });
-        }
-
+        // Check if the UPI/URL already exists in the database
         const existingLink = await link.findOne({ url });
+
         if (existingLink) {
-            return res.status(400).json({ message: 'This URL already exists. Try after 15 days.' });
+            return res.status(400).json({ message: 'This UPI/URL already exists please try after 15 days' });
         }
 
-        const newLink = new link({ url, interns: id });
-        const savedLink = await newLink.save();
-        internData.links.push(savedLink._id);
-        await internData.save();
+        // If UPI/URL is new, create a new entry
+        const newLink = new link({ url });
+        await newLink.save();
 
-        res.status(200).json({ message: 'Link submitted successfully', link: savedLink });
-
+        return res.status(200).json({ message: 'UPI/URL successfully added', link: newLink });
     } catch (error) {
-        console.error("Error in /submit-link:", error.message);
+        console.error("Error in /check-and-add-url:", error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
 
 
 module.exports = router;

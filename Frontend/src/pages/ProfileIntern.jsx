@@ -6,12 +6,14 @@ const ProfileIntern = () => {
   const [profile, setProfile] = useState(null);
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [url, setUrl] = useState('');
   const navigate = useNavigate();
 
   const headers = {
     id: localStorage.getItem("id"),
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
+
 
   useEffect(() => {
    
@@ -34,6 +36,9 @@ const ProfileIntern = () => {
     }
 }, [navigate]);
 
+
+
+
 if (loading) {
     return <p>Loading...</p>;
 }
@@ -42,9 +47,30 @@ if (!profile) {
     return <p>No profile data available.</p>;
 }
 
-return (
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+      const response = await axios.post('http://qodeit.store/api/check-and-add-url', { url });
+      alert(response.data.message); // Show success or error message in an alert
+  } catch (error) {
+      if (error.response) {
+          alert(error.response.data.message); // Show error message in an alert
+      } else {
+          alert('Error submitting UPI/URL');
+      }
+  }
+};
+
+
+
+
+
+return (<>
+
     <div>
-        <h1>{profile.name}'s Links</h1>
+        <h1>{profile.name} Links</h1>
         {links.length > 0 ? (
             <ul>
                 {links.map((link, index) => (
@@ -59,6 +85,19 @@ return (
             <p>No URLs available.</p>
         )}
     </div>
+     <div>
+     <form onSubmit={handleSubmit}>
+         <input
+             type="text"
+             value={url}
+             onChange={(e) => setUrl(e.target.value)}
+             placeholder="Enter UPI/URL"
+             required
+         />
+         <button type="submit">Submit</button>
+     </form>
+ </div>
+ </>
 );
 };
 
