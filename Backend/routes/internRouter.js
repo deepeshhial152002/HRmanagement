@@ -106,25 +106,32 @@ router.post("/login-intern",async(req,res)=>{
     router.get("/url-info-intern", authenticateToken, async (req, res) => {
         try {
             const { id } = req.headers;
+            const { page = 1, limit = 10 } = req.query;
     
-            // Fetch HR data and populate internID
-            const internData = await intern.findById(id).populate("links");
-    
+            const internData = await intern.findById(id)
+                .populate({
+                    path: "links",
+                    options: {
+                        skip: (page - 1) * limit,
+                        limit: parseInt(limit),
+                    },
+                });
     
             if (!internData) {
-                return res.status(404).json({ message: "HR not found" });
+                return res.status(404).json({ message: "Intern not found" });
             }
     
-          
-            const interndata = internData.links;
+            const totalLinks = internData.links.length;
             res.status(200).json({
                 message: "Success to get intern data",
-                data: interndata,
+                data: internData.links,
+                totalLinks,
             });
     
         } catch (error) {
-            console.error("Error fetching HR intern data:", error); // Log the error
+            console.error("Error fetching intern data:", error);
             return res.status(500).json({ message: "Internal server error", error: error.message });
         }
     });
+    
 module.exports = router;

@@ -19,42 +19,45 @@ const ProfileIntern = () => {
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
 
-  useEffect(() => {
-    const fetchProfile = async (retryCount = 3) => {
-      while (retryCount > 0) {
-        try {
-          const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
-          setInternProfile(response.data);
-          break; // Exit loop on success
-        } catch (error) {
-          retryCount--;
-          console.error("Error fetching profile data", error);
-          if (retryCount === 0) setInternProfile(null); // Set to null after all retries fail
+  const fetchProfile = async (retryCount = 3) => {
+    try {
+        const response = await axios.get(`http://qodeit.store/api/getIntern-info`, { headers });
+        setInternProfile(response.data);
+    } catch (error) {
+        if (retryCount > 0) {
+            console.log(`Retrying... (${3 - retryCount + 1})`);
+            fetchProfile(retryCount - 1);
+        } else {
+            console.error("Error fetching profile data", error);
         }
-      }
-    };
-  
-    const fetchUrlData = async (retryCount = 3) => {
-      while (retryCount > 0) {
-        try {
-          const response = await axios.get(`http://qodeit.store/url-info-intern`, { headers });
-          setUrlData(response.data.data || []);
-          break; // Exit loop on success
-        } catch (error) {
-          retryCount--;
-          console.error("Error fetching URL data", error);
-          if (retryCount === 0) setUrlData([]); // Set to empty array after all retries fail
-        }
-      }
-    };
-  
-    if (!headers.id || !headers.authorization) {
-      navigate("/");
-    } else {
-      fetchProfile();
-      fetchUrlData();
     }
-  }, [headers, navigate]);
+};
+
+const fetchUrlData = async (retryCount = 3) => {
+    try {
+        const response = await axios.get(`http://qodeit.store/url-info-intern?page=${currentPage}&limit=${urlsPerPage}`, { headers });
+        setUrlData(response.data.data || []);
+    } catch (error) {
+        if (retryCount > 0) {
+            console.log(`Retrying... (${3 - retryCount + 1})`);
+            fetchUrlData(retryCount - 1);
+        } else {
+            console.error("Error fetching URL data", error);
+            setUrlData([]);
+        }
+    }
+};
+
+useEffect(() => {
+  if (!headers.id || !headers.authorization) {
+      navigate("/");
+      return;
+  }
+
+  fetchProfile();
+  fetchUrlData();
+}, [headers, navigate, currentPage]);
+
   
 
   // Pagination logic
