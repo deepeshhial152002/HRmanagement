@@ -88,31 +88,7 @@ router.post("/login-intern",async(req,res)=>{
     })
 
 
-    router.get("/getIntern-info", async (req, res) => {
-        try {
-            const { id } = req.headers;
-    
-            if (!id) {
-                return res.status(400).json({ message: 'Missing intern ID' });
-            }
-    
-            const data = await intern.findById(id).select('-password');
-    
-            if (!data) {
-                return res.status(404).json({ message: "Intern not found" });
-            }
-    
-            res.status(200).json(data);
-        } catch (error) {
-            console.error("Error in /getIntern-info:", error.message);
-            res.status(500).json({ message: "Internal server error" });
-        }
-    });
-    
-
-
-
-    router.get("/url-info-intern", async (req, res) => {
+    router.get("/intern-info", authenticateToken, async (req, res) => {
         try {
             const { id, page = 1, limit = 10 } = req.headers;
     
@@ -120,7 +96,15 @@ router.post("/login-intern",async(req,res)=>{
                 return res.status(400).json({ message: 'Missing intern ID' });
             }
     
-            const internData = await intern.findById(id).populate({
+            // Fetch intern profile
+            const internData = await intern.findById(id).select('-password');
+    
+            if (!internData) {
+                return res.status(404).json({ message: "Intern not found" });
+            }
+    
+            // Fetch intern links with pagination
+            const linksData = await intern.findById(id).populate({
                 path: 'links',
                 select: 'url createdAt',
                 options: {
@@ -129,19 +113,17 @@ router.post("/login-intern",async(req,res)=>{
                 },
             });
     
-            if (!internData) {
-                return res.status(404).json({ message: "Intern not found" });
-            }
-    
+            // Send combined response
             res.status(200).json({
-                message: "Success in getting intern data",
-                data: internData.links,
+                profile: internData,
+                links: linksData.links,
             });
         } catch (error) {
-            console.error("Error in /url-info-intern:", error.message);
+            console.error("Error in /intern-info:", error.message);
             res.status(500).json({ message: "Internal server error", error: error.message });
         }
     });
+    
     
     
     
