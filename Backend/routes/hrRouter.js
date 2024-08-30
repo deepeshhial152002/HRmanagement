@@ -48,9 +48,7 @@ router.post("/login",async(req,res)=>{
             if(data){
                 const authClaims = [{Username:existinguser.Username}]
 
-                const token = jwt.sign({authClaims},`${process.env.jwtkey}`,{
-                    expiresIn:"30d"
-                })
+                const token = jwt.sign({authClaims},`${process.env.jwtkey}`)
                 return  res.status(200).json({id:existinguser._id,token:token})
             }
             else{

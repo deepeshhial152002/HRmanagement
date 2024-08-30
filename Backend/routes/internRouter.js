@@ -9,27 +9,19 @@ const {authenticateToken} = require("../routes/auth");
 
 router.post("/sign-up-intern", async (req, res) => {
     try {
-        const { name,  DOB, hrID } = req.body;
+        const { name, DOB, hrID } = req.body;
 
-        // Check username length
+        // Check name length
         if (name.length < 4) {
-            return res.status(400).json({ message: "Username length must be greater than 3" });
+            return res.status(400).json({ message: "Name length must be greater than 3" });
         }
 
-        // Check if username exists
-        const existingUsername = await intern.findOne({ name: name });
-        if (existingUsername) {
-            return res.status(400).json({ message: "Username already exists" });
-        }
-
-  
-
-        // Check password length
+        // Check DOB length
         if (DOB.length <= 2) {
-            return res.status(400).json({ message: "Password length must be greater than 2" });
+            return res.status(400).json({ message: "DOB length must be greater than 2" });
         }
 
-        // Hash password
+        // Hash DOB
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(DOB, salt);
 
@@ -50,10 +42,14 @@ router.post("/sign-up-intern", async (req, res) => {
         return res.status(200).json({ message: "Signup successful" });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal server error" });
+        console.error("Error during sign-up:", error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
+        return res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
+
 
 
 
@@ -69,7 +65,7 @@ router.post("/login-intern", async (req, res) => {
         const isMatch = await bcrypt.compare(DOB, existingUser.DOB);
         if (isMatch) {
             const authClaims = { name: existingUser.name };
-            const token = jwt.sign(authClaims, process.env.jwtkey, { expiresIn: "30d" });
+            const token = jwt.sign(authClaims, process.env.jwtkey);
             return res.status(200).json({ id: existingUser._id, token });
         } else {
             return res.status(400).json({ message: "Invalid credentials" });
