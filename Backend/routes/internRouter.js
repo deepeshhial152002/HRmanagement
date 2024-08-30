@@ -57,36 +57,30 @@ router.post("/sign-up-intern", async (req, res) => {
 
 
 
-router.post("/login-intern",async(req,res)=>{
+router.post("/login-intern", async (req, res) => {
     try {
-        const {name,DOB} = req.body;
+        const { name, DOB } = req.body;
 
-        const existinguser = await intern.findOne({name})
-        if(!existinguser){
-            return res.status(400).json({message:"Invalid credential"})
+        const existingUser = await intern.findOne({ name });
+        if (!existingUser) {
+            return res.status(400).json({ message: "Invalid credentials" });
         }
 
+        const isMatch = await bcrypt.compare(DOB, existingUser.DOB);
+        if (isMatch) {
+            const authClaims = { name: existingUser.name };
+            const token = jwt.sign(authClaims, process.env.jwtkey, { expiresIn: "30d" });
+            return res.status(200).json({ id: existingUser._id, token });
+        } else {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
 
-        bcrypt.compare(DOB, existinguser.DOB).then(function(data) {
-
-            if(data){
-                const authClaims = [{name:existinguser.name}]
-
-                const token = jwt.sign({authClaims},`${process.env.jwtkey}`,{
-                    expiresIn:"30d"
-                })
-                return  res.status(200).json({id:existinguser._id,token:token})
-            }
-            else{
-                return res.status(400).json({message:"Invalid credential"})
-
-            }
-        });
-       
     } catch (error) {
-         res.status(500).json({message:"Internal server error"})
+        console.error("Error during login:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-    })
+});
+
 
 
     

@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <div className="w-full bg-zinc-700 h-[9vh] flex items-center justify-between text-white px-4">
       <div>
-        <img className="w-16 sm:w-20" src="public\Qodeit.png" alt="Qodeit Logo" />
+        <img className="w-16 sm:w-20" src="assets\Qodeit.png" alt="Qodeit Logo" />
       </div>
 
       <div className="flex items-center justify-center gap-4 sm:gap-6">
