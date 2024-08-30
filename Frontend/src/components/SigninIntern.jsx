@@ -42,15 +42,25 @@ const SigninIntern = () => {
         alert('All fields are required');
       } else {
         const response = await axios.post(`http://qodeit.store/api/sign-up-intern`, formValues);
-        console.log(response.data);
+        console.log('Response:', response.data);
         alert(response.data.message);
         navigate('/LoginIntern');
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        const parsedResponse = JSON.parse(error.request.response);
-        setError(parsedResponse.message);
-        alert(parsedResponse.message);
+      console.error('Sign up error:', error);
+      if (error.response) {
+        // Handle errors from the server
+        if (error.response.status === 400) {
+          try {
+            const parsedResponse = JSON.parse(error.request.response);
+            setError(parsedResponse.message);
+            alert(parsedResponse.message);
+          } catch (e) {
+            console.error('Error parsing response:', e);
+          }
+        } else {
+          setError('Sign up failed. Please try again.');
+        }
       } else {
         setError('Sign up failed. Please try again.');
       }
@@ -58,6 +68,7 @@ const SigninIntern = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 sm:px-6 lg:px-8">
