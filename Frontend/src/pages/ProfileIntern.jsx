@@ -66,71 +66,72 @@ const ProfileIntern = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <p className="text-center">Loading...</p>;
     }
 
     if (!profile) {
-        return <p>No profile data available.</p>;
+        return <p className="text-center">No profile data available.</p>;
     }
 
     return (
         <div className="max-w-4xl p-4 mx-auto">
-            <div className='flex items-center justify-between' >
-            <h1 className="mb-4 text-2xl font-bold">{profile.name} Links</h1>
-            
-            <button
-        className="w-24 h-10 mt-6 text-white rounded-md bg-zinc-700"
-        onClick={() => {
-          dispatch(authAction.logout());
-          localStorage.clear();
-          navigate("/LoginIntern");
-        }}
-      >
-        Logout
-      </button>
-
+            <div className="flex flex-col items-center justify-between md:flex-row">
+                <h1 className="mb-4 text-2xl font-bold text-center md:text-left">{profile.name} Links</h1>
+                <button
+                    className="w-24 h-10 mt-6 text-white rounded-md bg-zinc-700 md:mt-0"
+                    onClick={() => {
+                        localStorage.clear();
+                        navigate("/LoginIntern");
+                    }}
+                >
+                    Logout
+                </button>
             </div>
-            <div className="mt-8">
-                <form onSubmit={handleSubmit} className="flex items-center">
+
+            <div className="mt-8 mb-8">
+                <form onSubmit={handleSubmit} className="flex flex-col items-center md:flex-row">
                     <input
                         type="text"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="Enter UPI/URL"
                         required
-                        className="flex-grow px-4 py-2 border rounded-l-md focus:outline-none"
+                        className="flex-grow w-full px-4 py-2 mb-2 border rounded-md focus:outline-none md:rounded-l-md md:mb-0"
                     />
-                    <button type="submit" className="px-4 py-2 text-white bg-zinc-700 rounded-r-md">
+                    <button type="submit" className="px-4 py-2 text-white rounded-md bg-zinc-700 md:rounded-r-md">
                         Submit
                     </button>
                 </form>
             </div>
+
             {links.length > 0 ? (
-                <table className="min-w-full overflow-hidden bg-white rounded-lg shadow-md">
-                    <thead>
-                        <tr className="text-white bg-gray-800">
-                            <th className="px-4 py-2">Serial No</th>
-                            <th className="px-4 py-2">URL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentLinks.map((link, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="px-4 py-2 text-center">{startIndex + index + 1}</td>
-                                <td className="px-4 py-2">
-                                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                        {link.url}
-                                    </a>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full overflow-hidden bg-white rounded-lg shadow-md">
+                        <thead>
+                            <tr className="text-white bg-gray-800">
+                                <th className="px-4 py-2">Serial No</th>
+                                <th className="px-4 py-2">URL</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {currentLinks.map((link, index) => (
+                                <tr key={index} className="border-b">
+                                    <td className="px-4 py-2 text-center">{startIndex + index + 1}</td>
+                                    <td className="px-4 py-2">
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                            {link.url}
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
-                <p className="text-gray-600">No URLs available.</p>
+                <p className="text-center text-gray-600">No URLs available.</p>
             )}
 
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex flex-col items-center justify-between mt-4 space-y-2 md:flex-row md:space-y-0">
                 <button
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
@@ -149,8 +150,6 @@ const ProfileIntern = () => {
                     Next
                 </button>
             </div>
-
-   
         </div>
     );
 };
