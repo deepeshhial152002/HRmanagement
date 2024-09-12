@@ -171,7 +171,7 @@ const ProfileIntern = () => {
             try {
                 let endpoint = '';
                 if (type === 'facebook') {
-                    // endpoint = `http://localhost:3007/api/link/link-delete/${linkId}`;
+                    // endpoint = ` /api/link/link-delete/${linkId}`;
                     endpoint = `http://qodeit.store/api/link/link-delete/${linkId}`;
                 } else if (type === 'linkedin') {
                     // endpoint = `http://localhost:3007/api/linkedin/linkedinlink-delete/${linkId}`;
@@ -265,7 +265,12 @@ const ProfileIntern = () => {
                             {currentLinks.map((link, index) => (
                                 <tr key={link._id}>
                                     <td className="px-4 py-2 border-b">{startIndex + index + 1}</td>
-                                    <td className="px-4 py-2 break-all border-b">{link.url}</td>
+                                    <td className="px-4 py-2 break-all border-b">
+                                        
+                                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 break-words hover:underline"> {link.url}
+                                    </a>
+                       
+                                        </td>
                                     <td className="px-4 py-2 border-b">
                                         <button
                                             className="px-4 py-2 text-white bg-red-600 rounded-md"
@@ -323,7 +328,10 @@ const ProfileIntern = () => {
                             {currentLinkedinLinks.map((link, index) => (
                                 <tr key={link._id}>
                                     <td className="px-4 py-2 border-b">{startIndexLinkedin + index + 1}</td>
-                                    <td className="px-4 py-2 break-all border-b">{link.url}</td>
+                                    <td className="px-4 py-2 break-all border-b">
+                                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 break-words hover:underline"> {link.url}
+                                    </a>
+                                    </td>
                                     <td className="px-4 py-2 border-b">
                                         <button
                                             className="px-4 py-2 text-white bg-red-600 rounded-md"
