@@ -11,6 +11,7 @@ const AdmineAllLogs = () => {
         const fetchDeletionLogs = async () => {
             try {
                 const response = await axios.get(`http://qodeit.store/api/getall-deletedlogs`);
+                // const response = await axios.get(`http://localhost:3007/api/getall-deletedlogs`);
                 setDeletionLogs(response.data.data);
             } catch (error) {
                 console.error("Error fetching deletion logs", error);

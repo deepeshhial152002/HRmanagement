@@ -4,6 +4,7 @@ const router = express.Router();
 const hr = require("../model/hr");  
 const intern = require("../model/intern");
 const link = require("../model/link");
+const linkedinlink = require("../model/linkedinLink.js");
 const DeletionLog = require('../model/deletionLog');
 const {authenticateToken} = require("../routes/auth");
 const bcrypt = require("bcrypt");
@@ -144,6 +145,7 @@ router.post("/login",async(req,res)=>{
     
             // Delete all associated links
             await link.deleteMany({ interns: internId });
+            await linkedinlink.deleteMany({ interns: internId });
     
             // Log the deletion
             const deletionLog = new DeletionLog({
@@ -162,10 +164,14 @@ router.post("/login",async(req,res)=>{
             return res.status(500).json({ message: "Internal server error" });
         }
     });
+
+    router.get("/show-link",(req,res)=>{
+        
+    })
     
     module.exports = router;
     
     
 
 
-module.exports = router;  
+

@@ -27,6 +27,7 @@ const LoginHR = () => {
         alert('All fields are required');
       } else {
         const response = await axios.post('http://qodeit.store/api/login', Values);
+        // const response = await axios.post('http://localhost:3007/api/login', Values);
 
         dispatch(authAction.login());
         localStorage.setItem('id', response.data.id);

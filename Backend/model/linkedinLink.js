@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const linkSchema = new mongoose.Schema({
+const LinkedinLinkSchema = new mongoose.Schema({
     
     url: {
         type: String,
@@ -10,7 +10,7 @@ const linkSchema = new mongoose.Schema({
     interns: { type: mongoose.Schema.Types.ObjectId, ref: 'intern' },
 },{timestamps: true});
 
-const link = mongoose.model('link', linkSchema);
-module.exports = link;
+const linkedinlink = mongoose.model('linkedinlink', LinkedinLinkSchema);
+module.exports = linkedinlink;
 
 

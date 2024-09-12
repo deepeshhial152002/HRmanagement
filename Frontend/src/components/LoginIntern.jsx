@@ -28,6 +28,7 @@ const LoginIntern = () => {
         alert('All fields are required');
       } else {
         const response = await axios.post(`http://qodeit.store/api/login-intern`, Values);
+        // const response = await axios.post(`http://localhost:3007/api/login-intern`, Values);
 
         dispatch(authAction.login());
 

@@ -9,6 +9,7 @@ import AdmineLogin from './pages/AdmineLogin'
 import AdmineAllLogs from './pages/AdmineAllLogs'
 import LoginIntern from './components/LoginIntern'
 import SigninIntern from './components/SigninIntern'
+import InternLinkDetails from './pages/InternLinkDetails'
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
     <Route path="/ProfileIntern" element={<ProfileIntern />} />
     <Route path="/admin" element={<AdmineLogin />} />
     <Route path="/gjasdjagsfkuhaskufhas" element={<AdmineAllLogs />} />
+    <Route path="/:name/:id" element={<InternLinkDetails />} />
     </Routes>
 
     </>
